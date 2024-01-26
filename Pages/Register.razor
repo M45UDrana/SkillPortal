@@ -1,0 +1,71 @@
+﻿@page "/register"
+@using SkillPortal.Models.Dto
+@using SkillPortal.Services
+@using SkillPortal.Services.Interfaces
+@inject IUserService userService
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navManager
+@inject IJSRuntime js
+
+<PageTitle>Register</PageTitle>
+
+<div class="row">
+    <div class="col-lg-4 offset-lg-4 pt-4 pb-4 border">
+        <div class="mb-3 text-center">
+            <h3>Register</h3>
+        </div>
+        <div class="mb-3">
+            <label>Full Name</label>
+            <input @bind="model.FullName" class="form-control" placeholder="Full Name" />
+        </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input @bind="model.Email" class="form-control" placeholder="Email" />
+        </div>
+        <div class="mb-3">
+            <label>Password</label>
+            <input @bind="model.Password" type="password" class="form-control" placeholder="Password" />
+        </div>
+        <div class="mb-3">
+            <label>Confirm Password</label>
+            <input @bind="model.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+        </div>
+        <div class="mb-3">
+            <label>User Role</label>
+            <input @bind="model.Role" class="form-control" placeholder="User Role" />
+        </div>
+        <div class="mb-3 d-grid gap-2">
+            <button @onclick="RegisterUser" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterModel model = new RegisterModel();
+
+    private async Task RegisterUser()
+    {
+        //TODO:: Add validation using data annotations and use Enum for role.
+        if (
+            String.IsNullOrEmpty(model.FullName) || 
+            String.IsNullOrEmpty(model.Email) || 
+            String.IsNullOrEmpty(model.Password) || 
+            String.IsNullOrEmpty(model.Role) || 
+            model.Password != model.ConfirmPassword || 
+            model.Role != "employee" && model.Role != "admin")
+        {
+            await js.InvokeVoidAsync("alert", "Invalid User Information");
+            return;
+        }
+
+        userService.AddUser(model);
+
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+            {
+                Email = model.Email,
+                Role = model.Role
+            });
+        navManager.NavigateTo("/", true);
+    }
+}
