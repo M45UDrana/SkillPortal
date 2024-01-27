@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SkillPortal.Models;
+﻿namespace SkillPortal.Models;
 
 public partial class Employee
 {

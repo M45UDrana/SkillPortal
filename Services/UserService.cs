@@ -26,14 +26,19 @@ namespace SkillPortal.Services
                 FullName = model.FullName,
                 Password = model.Password,
                 Role = model.Role,
-                IsActive = true,
-                Emails = new List<Email>
-                {
-                    new Email { EmailAddress = model.Email, IsPrimary = true }
-                }
+                IsActive = true
             };
 
+            Email email = new Email
+            {
+                EmailAddress = model.Email,
+                IsPrimary = true
+            };
+
+            email.User = user;
+
             _unitOfWork.Users.Add(user);
+            _unitOfWork.Emails.Add(email);
             _unitOfWork.Save();
         }
     }

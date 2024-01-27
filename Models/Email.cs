@@ -11,6 +11,4 @@ public partial class Email
     public bool? IsPrimary { get; set; }
 
     public virtual User? User { get; set; }
-
-    public virtual ICollection<User> Users { get; } = new List<User>();
 }
